@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch the Box Game</title>
+    <title>Egg Hunt Game</title>
     <style>
         body {
             display: flex;
@@ -24,24 +24,24 @@
             background-color: #444;
         }
 
-        .box {
+        .egg {
             position: absolute;
             width: 50px;
-            height: 50px;
-            background-color: #61dafb;
-            border-radius: 10px;
+            height: 80px;
+            background: linear-gradient(to bottom, #ffcc00 0%, #ff9966 100%);
+            border-radius: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             cursor: pointer;
             transition: transform 0.2s;
             animation: fall 3s linear infinite;
         }
 
-        .box:hover {
+        .egg:hover {
             transform: scale(1.1);
         }
 
         @keyframes fall {
-            0% { top: -50px; left: calc(100% * var(--x)); }
+            0% { top: -80px; left: calc(100% * var(--x)); }
             100% { top: 100%; }
         }
 
@@ -77,7 +77,7 @@
 </head>
 <body>
     <div class="game-container">
-        <div class="box" onclick="catchBox()"></div>
+        <div class="egg" onclick="catchEgg()"></div>
         <div class="score">Score: <span id="score">0</span></div>
         <div class="game-over" id="gameOver">Game Over!</div>
         <button class="restart-button" id="restartButton" onclick="restartGame()">Restart</button>
@@ -90,25 +90,25 @@
         const gameOverDisplay = document.getElementById('gameOver');
         const restartButton = document.getElementById('restartButton');
 
-        function catchBox() {
+        function catchEgg() {
             if (!gameActive) return;
 
             score++;
             scoreDisplay.textContent = score;
-            resetBox();
+            resetEgg();
 
-            // End game condition (for demo, after catching 10 boxes)
+            // End game condition (for demo, after catching 10 eggs)
             if (score >= 10) {
                 endGame();
             }
         }
 
-        function resetBox() {
-            const box = document.querySelector('.box');
-            box.style.setProperty('--x', Math.random());
-            box.style.animation = 'none';
-            void box.offsetWidth; // Trigger reflow
-            box.style.animation = '';
+        function resetEgg() {
+            const egg = document.querySelector('.egg');
+            egg.style.setProperty('--x', Math.random());
+            egg.style.animation = 'none';
+            void egg.offsetWidth; // Trigger reflow
+            egg.style.animation = '';
         }
 
         function endGame() {
@@ -123,7 +123,7 @@
             gameActive = true;
             gameOverDisplay.style.display = 'none';
             restartButton.style.display = 'none';
-            resetBox();
+            resetEgg();
         }
     </script>
 </body>
