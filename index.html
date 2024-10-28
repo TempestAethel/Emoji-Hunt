@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Box Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c34;
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+        }
+
+        .game-container {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            border: 2px solid #fff;
+            overflow: hidden;
+            background-color: #444;
+        }
+
+        .box {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #61dafb;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation: fall 3s linear infinite;
+        }
+
+        .box:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes fall {
+            0% { top: -50px; left: calc(100% * var(--x)); }
+            100% { top: 100%; }
+        }
+
+        .score {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 20px;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #ff4757;
+            display: none;
+        }
+
+        .restart-button {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff4757;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="box" onclick="catchBox()"></div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="game-over" id="gameOver">Game Over!</div>
+        <button class="restart-button" id="restartButton" onclick="restartGame()">Restart</button>
+    </div>
+    
+    <script>
+        let score = 0;
+        let gameActive = true;
+        const scoreDisplay = document.getElementById('score');
+        const gameOverDisplay = document.getElementById('gameOver');
+        const restartButton = document.getElementById('restartButton');
+
+        function catchBox() {
+            if (!gameActive) return;
+
+            score++;
+            scoreDisplay.textContent = score;
+            resetBox();
+
+            // End game condition (for demo, after catching 10 boxes)
+            if (score >= 10) {
+                endGame();
+            }
+        }
+
+        function resetBox() {
+            const box = document.querySelector('.box');
+            box.style.setProperty('--x', Math.random());
+            box.style.animation = 'none';
+            void box.offsetWidth; // Trigger reflow
+            box.style.animation = '';
+        }
+
+        function endGame() {
+            gameActive = false;
+            gameOverDisplay.style.display = 'block';
+            restartButton.style.display = 'block';
+        }
+
+        function restartGame() {
+            score = 0;
+            scoreDisplay.textContent = score;
+            gameActive = true;
+            gameOverDisplay.style.display = 'none';
+            restartButton.style.display = 'none';
+            resetBox();
+        }
+    </script>
+</body>
+</html>
