@@ -2,129 +2,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egg Hunt Game</title>
+    <title>Emoji Hunt: Shadow Edition</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #282c34;
-            font-family: Arial, sans-serif;
-            color: white;
             margin: 0;
-        }
-
-        .game-container {
-            position: relative;
-            width: 300px;
-            height: 500px;
-            border: 2px solid #fff;
             overflow: hidden;
-            background-color: #444;
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
         }
-
-        .egg {
-            position: absolute;
-            width: 50px;
-            height: 80px;
-            background: linear-gradient(to bottom, #ffcc00 0%, #ff9966 100%);
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: transform 0.2s;
-            animation: fall 3s linear infinite;
-        }
-
-        .egg:hover {
-            transform: scale(1.1);
-        }
-
-        @keyframes fall {
-            0% { top: -80px; left: calc(100% * var(--x)); }
-            100% { top: 100%; }
-        }
-
-        .score {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 20px;
-        }
-
-        .game-over {
+        #menu {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 30px;
-            color: #ff4757;
-            display: none;
+            text-align: center;
         }
-
-        .restart-button {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #ff4757;
+        #menu button {
+            background-color: #333;
             border: none;
-            border-radius: 5px;
-            color: white;
+            color: #fff;
+            padding: 15px 30px;
+            margin: 10px;
             cursor: pointer;
-            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #menu button:hover {
+            background-color: #555;
+        }
+        .emoji {
+            position: absolute;
+            opacity: 1;
+            font-size: 40px;
+            pointer-events: none; /* Prevent mouse events */
+            transition: opacity 0.3s;
+        }
+        .emoji:hover {
+            opacity: 0.5; /* Change opacity when hovered */
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="egg" onclick="catchEgg()"></div>
-        <div class="score">Score: <span id="score">0</span></div>
-        <div class="game-over" id="gameOver">Game Over!</div>
-        <button class="restart-button" id="restartButton" onclick="restartGame()">Restart</button>
-    </div>
-    
-    <script>
-        let score = 0;
-        let gameActive = true;
-        const scoreDisplay = document.getElementById('score');
-        const gameOverDisplay = document.getElementById('gameOver');
-        const restartButton = document.getElementById('restartButton');
 
-        function catchEgg() {
-            if (!gameActive) return;
+<div id="menu">
+    <h1>Emoji Hunt: Shadow Edition</h1>
+    <button onclick="startGame()">Start Game</button>
+</div>
 
+<div id="score">Score: 0</div>
+
+<script>
+    let score = 0;
+    let timer;
+    let gameActive = false;
+
+    function startGame() {
+        score = 0;
+        gameActive = true;
+        document.getElementById('score').innerText = 'Score: ' + score;
+        document.getElementById('menu').style.display = 'none';
+        spawnEmoji();
+        startTimer();
+    }
+
+    function spawnEmoji() {
+        if (!gameActive) return;
+
+        const emojis = ['😊', '😎', '🎉', '❤️', '🚀', '🌟'];
+        const emoji = document.createElement('div');
+        emoji.className = 'emoji';
+        emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        emoji.style.left = `${x}px`;
+        emoji.style.top = `${y}px`;
+
+        document.body.appendChild(emoji);
+
+        emoji.addEventListener('mouseover', () => {
             score++;
-            scoreDisplay.textContent = score;
-            resetEgg();
+            document.getElementById('score').innerText = 'Score: ' + score;
+            document.body.removeChild(emoji);
+            spawnEmoji();
+        });
 
-            // End game condition (for demo, after catching 10 eggs)
-            if (score >= 10) {
-                endGame();
+        setTimeout(() => {
+            if (document.body.contains(emoji)) {
+                document.body.removeChild(emoji);
+                spawnEmoji();
             }
-        }
+        }, 3000); // Emojis disappear after 3 seconds
+    }
 
-        function resetEgg() {
-            const egg = document.querySelector('.egg');
-            egg.style.setProperty('--x', Math.random());
-            egg.style.animation = 'none';
-            void egg.offsetWidth; // Trigger reflow
-            egg.style.animation = '';
-        }
+    function startTimer() {
+        let timeLeft = 60;
+        timer = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                gameActive = false;
+                alert('Time\'s up! Your score is: ' + score);
+                document.getElementById('menu').style.display = 'block';
+            } else {
+                timeLeft--;
+            }
+        }, 1000);
+    }
+</script>
 
-        function endGame() {
-            gameActive = false;
-            gameOverDisplay.style.display = 'block';
-            restartButton.style.display = 'block';
-        }
-
-        function restartGame() {
-            score = 0;
-            scoreDisplay.textContent = score;
-            gameActive = true;
-            gameOverDisplay.style.display = 'none';
-            restartButton.style.display = 'none';
-            resetEgg();
-        }
-    </script>
 </body>
 </html>
