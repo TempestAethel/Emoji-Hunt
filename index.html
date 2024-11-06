@@ -72,6 +72,27 @@
         #timer {
             right: 10px;
         }
+
+        /* Toast notification style */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.5s ease, bottom 0.5s ease;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            bottom: 40px;
+        }
     </style>
 </head>
 <body>
@@ -84,6 +105,8 @@
 <div id="score">Score: 0</div>
 <div id="highscore">High Score: 0</div>
 <div id="timer">Time: 60</div>
+
+<div id="toast" class="toast"></div> <!-- Toast container -->
 
 <script>
     let score = 0;
@@ -139,7 +162,7 @@
             if (timeLeft <= 0) {
                 clearInterval(timer);
                 gameActive = false;
-                alert('Time\'s up! Your score is: ' + score);
+                showToast('Time\'s up! Your score is: ' + score);
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('highScore', highScore);
@@ -151,6 +174,18 @@
                 document.getElementById('timer').innerText = 'Time: ' + timeLeft;
             }
         }, 1000);
+    }
+
+    // Function to show the toast
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        
+        // Hide the toast after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 </script>
 
